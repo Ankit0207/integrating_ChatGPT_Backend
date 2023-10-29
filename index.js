@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { OpenAIApi, CreateCompletionRequest } = require('openai'); // Updated import
+const OpenAI = require('openai');
 
 require('dotenv').config();
 
@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const openai = new OpenAIApi({ key: process.env.OPENAI_API_KEY }); // Updated API initialization
+const openai = new OpenAI({ key: process.env.OPENAI_API_KEY }); 
 
 app.post('/generate_content', async (req, res) => {
   // Get the user's input from the request
@@ -23,13 +23,11 @@ app.post('/generate_content', async (req, res) => {
   } else {
     let prompt = `act as you are an expert in ${category} telling, Generate a ${category} about ${keyword}.`;
     
-    const completionRequest = new CreateCompletionRequest({ // Updated request creation
+    const chatCompletion = await openai.chat.completions.create({ 
       model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: prompt }],
       max_tokens: 100,
     });
-
-    const chatCompletion = await openai.createCompletion(completionRequest); // Updated API method
 
     res.send({ "msg": chatCompletion.choices[0].message.content });
   }
