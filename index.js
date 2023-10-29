@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const openai = new OpenAI({ key: process.env.OPENAI_API_KEY }); 
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY }); 
 
 app.post('/generate_content', async (req, res) => {
   // Get the user's input from the request
