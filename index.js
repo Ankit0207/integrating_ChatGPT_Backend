@@ -9,7 +9,7 @@ app.use(cors());
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-app.post('/', async (req, res) => {
+app.post('/generate_content', async (req, res) => {
   // Get the user's input from the request
   const { keyword, category } = req.body;
 
