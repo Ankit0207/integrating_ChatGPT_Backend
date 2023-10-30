@@ -10,10 +10,9 @@ app.use(cors());
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY }); 
 
-app.post('/generate_content', async (req, res) => {
+app.get('/generate_content', async (req, res) => {
   // Get the user's input from the request
   const { keyword, category } = req.body;
-  console.log(keyword, category);
 
   // Use GPT-3 to generate a response
   if (!keyword) {
