@@ -10,7 +10,7 @@ app.use(cors());
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY }); 
 
-app.get('/generate_content', async (req, res) => {
+app.post('/generate_content', async (req, res) => {
   // Get the user's input from the request
   const { keyword, category } = req.body;
 
@@ -25,7 +25,7 @@ app.get('/generate_content', async (req, res) => {
     const chatCompletion = await openai.chat.completions.create({ 
       model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 100,
+      
     });
 
     res.send({ "msg": chatCompletion.choices[0].message.content });
