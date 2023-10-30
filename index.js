@@ -1,37 +1,41 @@
-const express = require('express');
-const cors = require('cors');
-const OpenAI = require('openai');
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const OpenAI = require("openai");
 
-require('dotenv').config();
+const apiKey = process.env.OPENAI_API_KEY;
+
+const openai = new OpenAI({ apiKey });
 
 const app = express();
+
 app.use(express.json());
 app.use(cors());
+app.use(express.static('public'));
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY }); 
+app.post('/get-response', async (req, res) => {
+  const { category, keyword } = req.body;
 
-app.post('/generate_content', async (req, res) => {
-  // Get the user's input from the request
-  const { keyword, category } = req.body;
 
-  // Use GPT-3 to generate a response
   if (!keyword) {
     return res.status(400).json({ error: "keyword is missing" });
   } else if (!category) {
     return res.status(400).json({ error: "category is missing" });
   } else {
-    let prompt = `act as you are an expert in ${category} telling, Generate a ${category} about ${keyword}.`;
-    
-    const chatCompletion = await openai.chat.completions.create({ 
+    const response = await openai.chat.completions.create({
+      messages: [
+        { role: "system", content: `Act as you are expert in ${category} generator.` },
+        { role: "user", content: `Generate a ${category} about ${keyword}.` },
+      ],
       model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: prompt }],
-      
     });
 
-    res.send({ "msg": chatCompletion.choices[0].message.content });
+    return res.status(200).send({ response: response.choices[0].message.content });
   }
 });
 
+
+
 app.listen(process.env.PORT, () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
+  console.log(`Server running on port ${process.env.PORT}`);
 });
